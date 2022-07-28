@@ -12,14 +12,14 @@ export async function getLastBlockNumber() {
   return lastHeader.number;
 }
 
-interface EventData {
+export type EventData = {
   eventId: string;
-  extrinsicId: number;
+  extrinsicId: string;
   method: string;
   section: string;
-  accountId?: string;
-  amount?: number;
-}
+  accountId: string;
+  amount: number;
+};
 
 export async function getEventsByBlock(blockNum: number) {
   const api = await createInstance();
@@ -34,10 +34,12 @@ export async function getEventsByBlock(blockNum: number) {
   for (const [key, value] of Object.entries(allRecords)) {
     if (value.event) {
       const currentEvent: EventData = {
-        eventId: key,
-        extrinsicId: value.phase.value,
+        eventId: `${blockNum}-${key}`,
+        extrinsicId: `${blockNum}-${value.phase.value}`,
         method: value.event.method,
         section: value.event.section,
+        accountId: 'N/A',
+        amount: 0,
       };
       if (value.event.data.who) {
         currentEvent.accountId = value.event.data.who;

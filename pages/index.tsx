@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getEventsByBlock, getLastBlockNumber, printEventsInfo } from '../utils/PolkadotScanner';
+import { getEventsByBlock } from '../utils/PolkadotScanner';
 
 export default function HomePage() {
   const testBlock = 11350896;
