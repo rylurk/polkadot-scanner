@@ -5,16 +5,25 @@ import {
   getPaginationRowModel,
   ColumnDef,
   flexRender,
+  SortingState,
+  getSortedRowModel,
 } from '@tanstack/react-table';
+import { useState } from 'react';
 import Filter from '../components/Filter';
 import { EventData } from '../utils/PolkadotScanner';
 
 export default function Table({ data, columns }: { data: EventData[]; columns: ColumnDef<EventData>[] }) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
-    // Pipeline
+    state: {
+      sorting,
+    },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     //
@@ -31,8 +40,12 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
                 return (
                   <th key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder ? null : (
-                      <div className="font-semibold uppercase text-sm tracking-wider mb-2">
+                      <div
+                        className="font-semibold uppercase text-sm tracking-wider mb-2 cursor-pointer select-none"
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
                         {flexRender(header.column.columnDef.header, header.getContext())}
+                        {{ asc: ' ⬆️', desc: ' ⬇️' }[header.column.getIsSorted() as string] ?? null}
                         {header.column.getCanFilter() ? (
                           <div>
                             <Filter column={header.column} table={table} />
