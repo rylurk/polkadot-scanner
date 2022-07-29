@@ -3,11 +3,15 @@ import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import Table from '../components/Table';
 import { useQuery } from '@tanstack/react-query';
-import { EventData, getEventsByBlock } from '../utils/PolkadotScanner';
+import { EventData, getEventsByBlock, getEventsByBlockRange } from '../utils/PolkadotScanner';
 
 export default function HomePage() {
-  const testBlock = 11350896;
-  const blockEvents = useQuery(['getEventsByBlock', testBlock], () => getEventsByBlock(testBlock));
+  const startBlock = 11350886;
+  const endBlock = 11350896;
+  const blockEvents = useQuery(['getEventsByBlock', 11350896], () => getEventsByBlock(11350896));
+  const allBlockEvents = useQuery(['getEventsByBlockRange', startBlock, endBlock], () =>
+    getEventsByBlockRange(startBlock, endBlock)
+  );
 
   const columns = useMemo<ColumnDef<EventData>[]>(
     () => [
@@ -47,14 +51,18 @@ export default function HomePage() {
     []
   );
 
-  if (blockEvents.isLoading) {
-    return <div>Loading...</div>;
+  if (allBlockEvents.isLoading) {
+    return (
+      <div className="flex justify-center">
+        <div className="ease-linear border-t-blue-400 animate-spin rounded-full border-gray-200 h-20 w-20 mt-20 border-8 border-t-8" />
+      </div>
+    );
   }
 
-  if (blockEvents.isFetched && blockEvents.data) {
+  if (allBlockEvents.isFetched && allBlockEvents.data) {
     return (
       <div className="py-6 px-10 ">
-        <Table {...{ data: blockEvents.data, columns }} />
+        <Table {...{ data: allBlockEvents.data, columns }} />
       </div>
     );
   }

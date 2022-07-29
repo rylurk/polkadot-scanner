@@ -44,3 +44,12 @@ export async function getEventsByBlock(blockNum: number) {
   }
   return parsedEvents;
 }
+
+export async function getEventsByBlockRange(startBlockNum: number, endBlockNum: number) {
+  const allBlockEvents = [];
+  for (let i = startBlockNum; i <= endBlockNum; i++) {
+    const blockEvents = await getEventsByBlock(i);
+    allBlockEvents.push(...blockEvents);
+  }
+  return allBlockEvents;
+}
