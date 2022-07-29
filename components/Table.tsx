@@ -23,7 +23,6 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
 
   return (
     <div className="p-2">
-      <div className="h-2" />
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -32,7 +31,7 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
                 return (
                   <th key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder ? null : (
-                      <div>
+                      <div className="font-semibold uppercase text-sm tracking-wider mb-2">
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {header.column.getCanFilter() ? (
                           <div>
@@ -50,36 +49,43 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
         <tbody>
           {table.getRowModel().rows.map((row) => {
             return (
-              <tr key={row.id}>
+              <tr key={row.id} className="font-light">
                 {row.getVisibleCells().map((cell) => {
-                  return <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>;
+                  return (
+                    <td key={cell.id} className="py-1 px-4">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  );
                 })}
               </tr>
             );
           })}
         </tbody>
       </table>
-      <div className="h-2" />
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 mt-4">
         <button
-          className="border rounded p-1"
+          className="border rounded py-2 px-4"
           onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
         >
           {'<<'}
         </button>
         <button
-          className="border rounded p-1"
+          className="border rounded py-2 px-4"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
           {'<'}
         </button>
-        <button className="border rounded p-1" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+        <button
+          className="border rounded py-2 px-4"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
           {'>'}
         </button>
         <button
-          className="border rounded p-1"
+          className="border rounded py-2 px-4"
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
         >
@@ -87,9 +93,9 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
         </button>
         <span className="flex items-center gap-1">
           <div>Page</div>
-          <strong>
+          <div className="font-semibold">
             {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-          </strong>
+          </div>
         </span>
         <span className="flex items-center gap-1">
           | Go to page:
@@ -100,10 +106,11 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
               const page = e.target.value ? Number(e.target.value) - 1 : 0;
               table.setPageIndex(page);
             }}
-            className="border p-1 rounded w-16"
+            className="border py-2 px-4 rounded w-16"
           />
         </span>
         <select
+          className="py-[11px] px-4 border border-gray-200 rounded"
           value={table.getState().pagination.pageSize}
           onChange={(e) => {
             table.setPageSize(Number(e.target.value));
@@ -116,7 +123,7 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
           ))}
         </select>
       </div>
-      <div>{table.getRowModel().rows.length} Rows</div>
+      <div className="mt-4">{table.getRowModel().rows.length} Rows</div>
     </div>
   );
 }

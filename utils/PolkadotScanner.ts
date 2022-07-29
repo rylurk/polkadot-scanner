@@ -13,12 +13,11 @@ export async function getLastBlockNumber() {
 }
 
 export type EventData = {
+  blockNum: number;
   eventId: string;
   extrinsicId: string;
   method: string;
   section: string;
-  accountId: string;
-  amount: number;
 };
 
 export async function getEventsByBlock(blockNum: number) {
@@ -34,17 +33,12 @@ export async function getEventsByBlock(blockNum: number) {
   for (const [key, value] of Object.entries(allRecords)) {
     if (value.event) {
       const currentEvent: EventData = {
+        blockNum: blockNum,
         eventId: `${blockNum}-${key}`,
         extrinsicId: `${blockNum}-${value.phase.value}`,
         method: value.event.method,
         section: value.event.section,
-        accountId: 'N/A',
-        amount: 0,
       };
-      if (value.event.data.who) {
-        currentEvent.accountId = value.event.data.who;
-        currentEvent.amount = value.event.data.amount / 10000000000;
-      }
       parsedEvents.push(currentEvent);
     }
   }

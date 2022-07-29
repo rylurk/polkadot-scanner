@@ -11,15 +11,15 @@ export default function Filter({ column, table }: { column: Column<any, any>; ta
         type="number"
         value={(columnFilterValue as [number, number])?.[0] ?? ''}
         onChange={(e) => column.setFilterValue((old: [number, number]) => [e.target.value, old?.[1]])}
-        placeholder={`Min`}
-        className="w-24 border shadow rounded"
+        placeholder={` Min`}
+        className="w-24 border rounded"
       />
       <input
         type="number"
         value={(columnFilterValue as [number, number])?.[1] ?? ''}
         onChange={(e) => column.setFilterValue((old: [number, number]) => [old?.[0], e.target.value])}
-        placeholder={`Max`}
-        className="w-24 border shadow rounded"
+        placeholder={` Max`}
+        className="w-24 border rounded"
       />
     </div>
   ) : (
@@ -27,8 +27,8 @@ export default function Filter({ column, table }: { column: Column<any, any>; ta
       type="text"
       value={(columnFilterValue ?? '') as string}
       onChange={(e) => column.setFilterValue(e.target.value)}
-      placeholder={`Search...`}
-      className="w-36 border shadow rounded"
+      placeholder={` Search...`}
+      className="w-36 border rounded"
     />
   );
 }
