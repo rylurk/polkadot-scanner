@@ -14,6 +14,7 @@ import { EventData } from '../utils/PolkadotScanner';
 
 export default function Table({ data, columns }: { data: EventData[]; columns: ColumnDef<EventData>[] }) {
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [expandData, setExpandData] = useState(false);
 
   const table = useReactTable({
     data,
@@ -67,7 +68,10 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
               <tr key={row.id} className="text-slate-700">
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <td key={cell.id} className="py-1 px-4 border border-gray">
+                    <td
+                      key={cell.id}
+                      className={`py-1 px-4 border border-gray ${!expandData && 'max-w-0 overflow-hidden'}`}
+                    >
                       <div className="">{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
                     </td>
                   );
@@ -137,6 +141,13 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
             </option>
           ))}
         </select>
+        <button
+          className="border-transparent rounded border-solid border-2 transition-colors duration-500 ease-in-out font-medium text-sm uppercase tracking-widest bg-gray-100 hover:bg-gray-200 py-2 px-5 mx-2"
+          type="submit"
+          onClick={() => setExpandData(!expandData)}
+        >
+          Expand data
+        </button>
       </div>
       <div className="mt-4 font-light">{table.getRowModel().rows.length} Rows | All columns sortable on click</div>
     </div>
