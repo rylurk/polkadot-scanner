@@ -1,57 +1,15 @@
-import { useMemo } from 'react';
-
-import { ColumnDef } from '@tanstack/react-table';
-import Table from '../components/Table';
 import { useQuery } from '@tanstack/react-query';
-import { EventData, getEventsByBlock, getEventsByBlockRange } from '../utils/PolkadotScanner';
+import { useState } from 'react';
+import BlockForm from '../components/BlockForm';
+import ScanResults from '../components/ScanResults';
+import { getLastBlockNumber } from '../utils/PolkadotScanner';
 
 export default function HomePage() {
-  const startBlock = 11350886;
-  const endBlock = 11350896;
-  const blockEvents = useQuery(['getEventsByBlock', 11350896], () => getEventsByBlock(11350896));
-  const allBlockEvents = useQuery(['getEventsByBlockRange', startBlock, endBlock], () =>
-    getEventsByBlockRange(startBlock, endBlock)
-  );
+  const defaultEndpoint = 'wss://rpc.polkadot.io';
+  const lastBlock = useQuery(['getLastBlockNumber', defaultEndpoint], () => getLastBlockNumber(defaultEndpoint));
+  const [queryParams, setQueryParams] = useState({ startBlock: 0, endBlock: 0, endpoint: '' });
 
-  const columns = useMemo<ColumnDef<EventData>[]>(
-    () => [
-      {
-        header: 'Events Data',
-        footer: (props) => props.column.id,
-        columns: [
-          {
-            accessorKey: 'blockNum',
-            header: () => 'Block',
-            footer: (props) => props.column.id,
-          },
-          {
-            accessorKey: 'eventId',
-            header: () => 'Event ID',
-            cell: (info) => info.getValue(),
-            footer: (props) => props.column.id,
-          },
-          {
-            accessorKey: 'extrinsicId',
-            header: () => 'Extrinsic ID',
-            footer: (props) => props.column.id,
-          },
-          {
-            accessorKey: 'section',
-            header: () => 'Section',
-            footer: (props) => props.column.id,
-          },
-          {
-            accessorKey: 'method',
-            header: () => 'Method',
-            footer: (props) => props.column.id,
-          },
-        ],
-      },
-    ],
-    []
-  );
-
-  if (allBlockEvents.isLoading) {
+  if (lastBlock.isLoading) {
     return (
       <div className="flex justify-center">
         <div className="ease-linear border-t-blue-400 animate-spin rounded-full border-gray-200 h-20 w-20 mt-20 border-8 border-t-8" />
@@ -59,11 +17,26 @@ export default function HomePage() {
     );
   }
 
-  if (allBlockEvents.isFetched && allBlockEvents.data) {
-    return (
-      <div className="py-6 px-10 ">
-        <Table {...{ data: allBlockEvents.data, columns }} />
-      </div>
-    );
-  }
+  const createTable = (startBlock: number, endBlock: number, endpoint: string) => {
+    setQueryParams({ startBlock, endBlock, endpoint });
+  };
+
+  return (
+    <div>
+      {queryParams.startBlock !== 0 ? (
+        <ScanResults
+          startBlock={queryParams.startBlock}
+          endBlock={queryParams.endBlock}
+          endpoint={queryParams.endpoint}
+        />
+      ) : (
+        <BlockForm
+          startBlock={Number(lastBlock.data) - 1}
+          endBlock={Number(lastBlock.data)}
+          endpoint={defaultEndpoint}
+          createTable={createTable}
+        />
+      )}
+    </div>
+  );
 }

@@ -26,7 +26,6 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    //
     debugTable: true,
   });
 
@@ -40,14 +39,17 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
                 return (
                   <th key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder ? null : (
-                      <div
-                        className="font-semibold uppercase text-sm tracking-wider mb-2 cursor-pointer select-none"
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {{ asc: ' ⬆️', desc: ' ⬇️' }[header.column.getIsSorted() as string] ?? null}
+                      <div className="font-semibold text-sm tracking-wider mb-2">
+                        <div className="cursor-pointer select-none" onClick={header.column.getToggleSortingHandler()}>
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {{ asc: ' ⬆️', desc: ' ⬇️' }[header.column.getIsSorted() as string] ?? null}
+                        </div>
                         {header.column.getCanFilter() ? (
-                          <div>
+                          <div
+                            onClick={() => {
+                              header.column.getToggleSortingHandler();
+                            }}
+                          >
                             <Filter column={header.column} table={table} />
                           </div>
                         ) : null}
@@ -62,7 +64,7 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
         <tbody>
           {table.getRowModel().rows.map((row) => {
             return (
-              <tr key={row.id} className="font-light">
+              <tr key={row.id} className="text-slate-700">
                 {row.getVisibleCells().map((cell) => {
                   return (
                     <td key={cell.id} className="py-1 px-4">
@@ -75,7 +77,7 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
           })}
         </tbody>
       </table>
-      <div className="flex items-center gap-2 mt-4">
+      <div className="flex items-center gap-2 mt-4 font-light">
         <button
           className="border rounded py-2 px-4"
           onClick={() => table.setPageIndex(0)}
@@ -106,7 +108,7 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
         </button>
         <span className="flex items-center gap-1">
           <div>Page</div>
-          <div className="font-semibold">
+          <div className="font-medium">
             {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
           </div>
         </span>
@@ -136,7 +138,7 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
           ))}
         </select>
       </div>
-      <div className="mt-4">{table.getRowModel().rows.length} Rows</div>
+      <div className="mt-4 font-light">{table.getRowModel().rows.length} Rows | All columns sortable on click</div>
     </div>
   );
 }
