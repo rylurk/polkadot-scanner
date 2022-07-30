@@ -39,7 +39,7 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
                 return (
                   <th key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder ? null : (
-                      <div className="font-semibold text-sm tracking-wider mb-2">
+                      <div className="font-semibold text-sm tracking-wider mb-2 float-left">
                         <div className="cursor-pointer select-none" onClick={header.column.getToggleSortingHandler()}>
                           {flexRender(header.column.columnDef.header, header.getContext())}
                           {{ asc: ' ⬆️', desc: ' ⬇️' }[header.column.getIsSorted() as string] ?? null}
@@ -67,8 +67,8 @@ export default function Table({ data, columns }: { data: EventData[]; columns: C
               <tr key={row.id} className="text-slate-700">
                 {row.getVisibleCells().map((cell) => {
                   return (
-                    <td key={cell.id} className="py-1 px-4">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <td key={cell.id} className="py-1 px-4 border border-gray">
+                      <div className="">{flexRender(cell.column.columnDef.cell, cell.getContext())}</div>
                     </td>
                   );
                 })}

@@ -1,4 +1,3 @@
-import { createTable } from '@tanstack/react-table';
 import { useState } from 'react';
 import useNumberInput from './useNumberInput';
 import useStringInput from './useStringInput';
@@ -14,21 +13,39 @@ export default function BlockForm(props: Props) {
   const [startBlock, startBlockInput] = useNumberInput(props.startBlock, 'startBlock');
   const [endBlock, endBlockInput] = useNumberInput(props.endBlock, 'endBlock');
   const [endpoint, endpointInput] = useStringInput(props.endpoint, 'endpoint');
-  const [showFormInvalid, setShowFormInvalid] = useState(false);
+  const [formInvalidMsg, setformInvalidMsg] = useState(['']);
 
   const submitHandler = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (startBlock !== 0 && endBlock !== 0 && endpoint.trim() !== '') {
+    const formInvalidations = [];
+
+    if (startBlock <= 0) {
+      formInvalidations.push('Please enter a value for start block (no negatives).');
+    }
+    if (endBlock <= 0) {
+      formInvalidations.push('Please enter a value for end block (no negatives).');
+    }
+    if (endBlock > props.endBlock || startBlock > props.endBlock) {
+      formInvalidations.push('Block numbers cannot be greater than the latest available.');
+    }
+    if (startBlock > endBlock) {
+      formInvalidations.push('Start block must be less than end block.');
+    }
+    if (endpoint.trim() === '') {
+      formInvalidations.push('Please enter an endpoint.');
+    }
+
+    if (formInvalidations.length === 0) {
       props.createTable(startBlock, endBlock, endpoint);
     } else {
-      setShowFormInvalid(true);
+      setformInvalidMsg(formInvalidations);
     }
   };
 
   const startBlockContainer = (
     <div>
       <label className="mb-2 block text-slate-600" htmlFor="source">
-        Start block *
+        Start block
       </label>
       {startBlockInput}
     </div>
@@ -37,7 +54,7 @@ export default function BlockForm(props: Props) {
   const endBlockContainer = (
     <div>
       <label className="mb-2 block text-slate-600" htmlFor="source">
-        End block *
+        End block
       </label>
       {endBlockInput}
     </div>
@@ -46,7 +63,7 @@ export default function BlockForm(props: Props) {
   const endpointContainer = (
     <div>
       <label className="mb-2 block text-slate-600" htmlFor="source">
-        Endpoint *
+        Endpoint
       </label>
       {endpointInput}
     </div>
@@ -63,8 +80,6 @@ export default function BlockForm(props: Props) {
     </div>
   );
 
-  const formInvalidMessage = <div className="mt-6">Please fill out all fields marked with an asterisk (*)</div>;
-
   return (
     <div className="flex justify-center mt-12">
       <form onSubmit={submitHandler}>
@@ -73,7 +88,13 @@ export default function BlockForm(props: Props) {
           {endBlockContainer}
           {endpointContainer}
           {submitButton}
-          {showFormInvalid && formInvalidMessage}
+          <div className="mt-8">
+            {formInvalidMsg.map((msg) => (
+              <div key={msg} className="mb-4 text-red-400">
+                {msg}
+              </div>
+            ))}
+          </div>
         </div>
       </form>
     </div>

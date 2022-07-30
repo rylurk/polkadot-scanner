@@ -18,6 +18,7 @@ export type EventData = {
   extrinsicId: string;
   method: string;
   section: string;
+  data: any;
 };
 
 export async function getEventsByBlock(blockNum: number, endpoint: string) {
@@ -29,7 +30,6 @@ export async function getEventsByBlock(blockNum: number, endpoint: string) {
   const allRecords = await apiAt.query.system.events();
 
   const parsedEvents = [];
-
   for (const [key, value] of Object.entries(allRecords)) {
     if (value.event) {
       const currentEvent: EventData = {
@@ -38,6 +38,7 @@ export async function getEventsByBlock(blockNum: number, endpoint: string) {
         extrinsicId: `${blockNum}-${value.phase.value}`,
         method: value.event.method,
         section: value.event.section,
+        data: value.event.data[0].toString(),
       };
       parsedEvents.push(currentEvent);
     }

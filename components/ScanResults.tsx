@@ -8,6 +8,7 @@ type Props = {
   startBlock: number;
   endBlock: number;
   endpoint: string;
+  reset: () => void;
 };
 
 export default function ResultsPage(props: Props) {
@@ -39,21 +40,17 @@ export default function ResultsPage(props: Props) {
           },
           {
             accessorKey: 'method',
-            header: () => 'Method',
+            header: () => 'Method Name',
+          },
+          {
+            accessorKey: 'data',
+            header: () => 'Data',
           },
         ],
       },
     ],
     []
   );
-
-  if (!allBlockEvents.isFetched || !allBlockEvents.data) {
-    return (
-      <div className="flex justify-center">
-        <div className="ease-linear border-t-blue-400 animate-spin rounded-full border-gray-200 h-20 w-20 mt-20 border-8 border-t-8" />
-      </div>
-    );
-  }
 
   return (
     <div className="py-6 px-10">
@@ -63,7 +60,24 @@ export default function ResultsPage(props: Props) {
         to block
         <div className="mx-1 text-blue-500">{props.endBlock}</div>
       </div>
-      <Table {...{ data: allBlockEvents.data, columns }} />
+      {!allBlockEvents.isFetched || !allBlockEvents.data ? (
+        <div className="flex justify-center">
+          <div className="ease-linear border-t-blue-400 animate-spin rounded-full border-gray-200 h-20 w-20 my-20 border-8 border-t-8" />
+        </div>
+      ) : (
+        <>
+          <Table {...{ data: allBlockEvents.data, columns }} />
+          <div className="flex justify-center">
+            <button
+              className="border-transparent rounded border-solid border-2 transition-colors duration-500 ease-in-out font-medium text-sm uppercase tracking-widest bg-blue-400 text-white hover:bg-blue-500 py-2 px-5 mt-6"
+              type="submit"
+              onClick={props.reset}
+            >
+              Begin new scan
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

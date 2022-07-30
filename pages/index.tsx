@@ -12,13 +12,17 @@ export default function HomePage() {
   if (lastBlock.isLoading) {
     return (
       <div className="flex justify-center">
-        <div className="ease-linear border-t-blue-400 animate-spin rounded-full border-gray-200 h-20 w-20 mt-20 border-8 border-t-8" />
+        <div className="ease-linear border-t-blue-400 animate-spin rounded-full border-gray-200 h-20 w-20 mt-32 border-8 border-t-8" />
       </div>
     );
   }
 
   const createTable = (startBlock: number, endBlock: number, endpoint: string) => {
     setQueryParams({ startBlock, endBlock, endpoint });
+  };
+
+  const resetQuery = () => {
+    setQueryParams({ startBlock: 0, endBlock: 0, endpoint: '' });
   };
 
   return (
@@ -28,6 +32,7 @@ export default function HomePage() {
           startBlock={queryParams.startBlock}
           endBlock={queryParams.endBlock}
           endpoint={queryParams.endpoint}
+          reset={resetQuery}
         />
       ) : (
         <BlockForm
