@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import basicAuth from 'express-basic-auth';
 import next from 'next';
 
 const port = process.env.PORT || 8080;
@@ -8,7 +9,13 @@ const handle = app.getRequestHandler();
 
 app.prepare().then(() => {
   const server = express();
-  console.log('here', port);
+
+  server.use(
+    basicAuth({
+      challenge: true,
+      users: { user: 'supersecret' },
+    })
+  );
 
   server.all('*', (req: Request, res: Response) => {
     return handle(req, res);
