@@ -1,4 +1,5 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import { EventData } from '../types/EventData';
 
 export async function createInstance(endpoint: string) {
   const wsProvider = new WsProvider(endpoint);
@@ -9,17 +10,9 @@ export async function createInstance(endpoint: string) {
 export async function getLastBlockNumber(endpoint: string) {
   const api = await createInstance(endpoint);
   const lastHeader = await api.rpc.chain.getHeader();
+  api.disconnect();
   return lastHeader.number;
 }
-
-export type EventData = {
-  blockNum: number;
-  eventId: string;
-  extrinsicId: string;
-  method: string;
-  section: string;
-  data: any;
-};
 
 export async function getEventsByBlock(blockNum: number, endpoint: string) {
   const api = await createInstance(endpoint);
@@ -43,6 +36,7 @@ export async function getEventsByBlock(blockNum: number, endpoint: string) {
       parsedEvents.push(currentEvent);
     }
   }
+  api.disconnect();
   return parsedEvents;
 }
 

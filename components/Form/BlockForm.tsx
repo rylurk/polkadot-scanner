@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import useNumberInput from './useNumberInput';
-import useStringInput from './useStringInput';
+import InputContainer from './InputContainer';
+import useNumberInput from '../Hooks/useNumberInput';
+import useStringInput from '../Hooks/useStringInput';
+import FormInvalidMessages from './FormInvalidMessages';
+import SubmitButton from './SubmitButton';
 
 type Props = {
   startBlock: number;
@@ -42,59 +45,15 @@ export default function BlockForm(props: Props) {
     }
   };
 
-  const startBlockContainer = (
-    <div>
-      <label className="mb-2 block text-slate-600" htmlFor="source">
-        Start block
-      </label>
-      {startBlockInput}
-    </div>
-  );
-
-  const endBlockContainer = (
-    <div>
-      <label className="mb-2 block text-slate-600" htmlFor="source">
-        End block
-      </label>
-      {endBlockInput}
-    </div>
-  );
-
-  const endpointContainer = (
-    <div>
-      <label className="mb-2 block text-slate-600" htmlFor="source">
-        Endpoint
-      </label>
-      {endpointInput}
-    </div>
-  );
-
-  const submitButton = (
-    <div className="flex justify-center">
-      <button
-        className="border-transparent rounded border-solid border-2 transition-colors duration-500 ease-in-out font-medium text-sm uppercase tracking-widest bg-blue-400 text-white hover:bg-blue-500 py-2 px-5 mt-4 w-full"
-        type="submit"
-      >
-        Scan
-      </button>
-    </div>
-  );
-
   return (
     <div className="flex justify-center mt-12">
       <form onSubmit={submitHandler}>
         <div className="flex flex-col w-72">
-          {startBlockContainer}
-          {endBlockContainer}
-          {endpointContainer}
-          {submitButton}
-          <div className="mt-8">
-            {formInvalidMsg.map((msg) => (
-              <div key={msg} className="mb-4 text-red-400">
-                {msg}
-              </div>
-            ))}
-          </div>
+          <InputContainer label="Start block" input={startBlockInput} />
+          <InputContainer label="End block" input={endBlockInput} />
+          <InputContainer label="Endpoint" input={endpointInput} />
+          <SubmitButton />
+          <FormInvalidMessages messages={formInvalidMsg} />
         </div>
       </form>
     </div>

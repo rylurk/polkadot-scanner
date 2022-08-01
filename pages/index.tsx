@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import BlockForm from '../components/BlockForm';
+import BlockForm from '../components/Form/BlockForm';
+import LoadingSpinner from '../components/LoadingSpinner';
 import ScanResults from '../components/ScanResults';
 import { getLastBlockNumber } from '../utils/PolkadotScanner';
 
@@ -10,11 +11,7 @@ export default function HomePage() {
   const [queryParams, setQueryParams] = useState({ startBlock: 0, endBlock: 0, endpoint: '' });
 
   if (lastBlock.isLoading) {
-    return (
-      <div className="flex justify-center">
-        <div className="ease-linear border-t-blue-400 animate-spin rounded-full border-gray-200 h-20 w-20 mt-32 border-8 border-t-8" />
-      </div>
-    );
+    return <LoadingSpinner verticalOffset="mt-32" />;
   }
 
   const createTable = (startBlock: number, endBlock: number, endpoint: string) => {

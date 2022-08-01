@@ -1,8 +1,12 @@
 import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import Table from './Table';
+import Table from './Table/Table';
 import { useQuery } from '@tanstack/react-query';
-import { EventData, getEventsByBlockRange, getLastBlockNumber } from '../utils/PolkadotScanner';
+import { getEventsByBlockRange } from '../utils/PolkadotScanner';
+import { EventData } from '../types/EventData';
+import TableTitle from './Table/TableTitle';
+import NewScanButton from './NewScanButton';
+import LoadingSpinner from './LoadingSpinner';
 
 type Props = {
   startBlock: number;
@@ -21,31 +25,12 @@ export default function ResultsPage(props: Props) {
       {
         header: '-',
         columns: [
-          {
-            accessorKey: 'eventId',
-            header: () => 'Event ID',
-            cell: (info) => info.getValue(),
-          },
-          {
-            accessorKey: 'blockNum',
-            header: () => 'Block Number',
-          },
-          {
-            accessorKey: 'extrinsicId',
-            header: () => 'Extrinsic ID',
-          },
-          {
-            accessorKey: 'section',
-            header: () => 'Section',
-          },
-          {
-            accessorKey: 'method',
-            header: () => 'Method Name',
-          },
-          {
-            accessorKey: 'data',
-            header: () => 'Data',
-          },
+          { accessorKey: 'eventId', header: () => 'Event ID', cell: (info) => info.getValue() },
+          { accessorKey: 'blockNum', header: () => 'Block Number' },
+          { accessorKey: 'extrinsicId', header: () => 'Extrinsic ID' },
+          { accessorKey: 'section', header: () => 'Section' },
+          { accessorKey: 'method', header: () => 'Method Name' },
+          { accessorKey: 'data', header: () => 'Data' },
         ],
       },
     ],
@@ -54,28 +39,13 @@ export default function ResultsPage(props: Props) {
 
   return (
     <div className="py-6 px-10">
-      <div className="flex justify-center text-xl font-semibold text-slate-700">
-        Events from block
-        <div className="mx-1 text-blue-500">{props.startBlock}</div>
-        to block
-        <div className="mx-1 text-blue-500">{props.endBlock}</div>
-      </div>
+      <TableTitle startBlock={props.startBlock} endBlock={props.endBlock} />
       {!allBlockEvents.isFetched || !allBlockEvents.data ? (
-        <div className="flex justify-center">
-          <div className="ease-linear border-t-blue-400 animate-spin rounded-full border-gray-200 h-20 w-20 my-20 border-8 border-t-8" />
-        </div>
+        <LoadingSpinner verticalOffset="my-20" />
       ) : (
         <>
           <Table {...{ data: allBlockEvents.data, columns }} />
-          <div className="flex justify-center">
-            <button
-              className="border-transparent rounded border-solid border-2 transition-colors duration-500 ease-in-out font-medium text-sm uppercase tracking-widest bg-blue-400 text-white hover:bg-blue-500 py-2 px-5 my-6"
-              type="submit"
-              onClick={props.reset}
-            >
-              Begin new scan
-            </button>
-          </div>
+          <NewScanButton reset={props.reset} />
         </>
       )}
     </div>
