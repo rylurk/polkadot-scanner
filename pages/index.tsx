@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import Head from 'next/head';
 import { useState } from 'react';
 import BlockForm from '../components/Form/BlockForm';
 import LoadingSpinner from '../components/LoadingSpinner';
@@ -23,22 +24,27 @@ export default function HomePage() {
   };
 
   return (
-    <div>
-      {queryParams.startBlock !== 0 ? (
-        <ScanResults
-          startBlock={queryParams.startBlock}
-          endBlock={queryParams.endBlock}
-          endpoint={queryParams.endpoint}
-          reset={resetQuery}
-        />
-      ) : (
-        <BlockForm
-          startBlock={Number(lastBlock.data) - 1}
-          endBlock={Number(lastBlock.data)}
-          endpoint={defaultEndpoint}
-          createTable={createTable}
-        />
-      )}
-    </div>
+    <>
+      <Head>
+        <title>Polkadot Scanner</title>
+      </Head>
+      <div>
+        {queryParams.startBlock !== 0 ? (
+          <ScanResults
+            startBlock={queryParams.startBlock}
+            endBlock={queryParams.endBlock}
+            endpoint={queryParams.endpoint}
+            reset={resetQuery}
+          />
+        ) : (
+          <BlockForm
+            startBlock={Number(lastBlock.data) - 1}
+            endBlock={Number(lastBlock.data)}
+            endpoint={defaultEndpoint}
+            createTable={createTable}
+          />
+        )}
+      </div>
+    </>
   );
 }
